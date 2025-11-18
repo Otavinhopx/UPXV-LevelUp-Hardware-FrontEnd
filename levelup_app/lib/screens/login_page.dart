@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:levelup_app/services/api.dart';
+import 'admin_hub_page.dart'; 
+import 'register_page.dart';
+
 
 class LoginPage extends StatefulWidget {
   final Api api;
-  const LoginPage({Key? key, required this.api}) : super(key: key);
+  const LoginPage({super.key, required this.api});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -21,8 +24,17 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => loading = true);
     final token = await widget.api.login(email, password);
     setState(() => loading = false);
+
     if (token != null) {
-      Navigator.pushReplacementNamed(context, '/products');
+      final isAdmin = await widget.api.isAdmin();
+      if (isAdmin) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => AdminHubPage(api: widget.api)),
+        );
+      } else {
+        Navigator.pushReplacementNamed(context, '/products');
+      }
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Login failed')));
@@ -35,50 +47,124 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => loading = true);
     final ok = await widget.api.register(email, password);
     setState(() => loading = false);
-    if (ok)
+    if (ok) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Registered!')));
-    else
+    } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Register failed')));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('LevelUp - Login')),
+      backgroundColor: Color(0xFF0B1D2A),
       body: Padding(
         padding: EdgeInsets.all(16),
-        child: Form(
-          key: _form,
-          child: Column(
-            children: [
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: (v) =>
-                    v == null || !v.contains('@') ? 'Email inválido' : null,
-                onSaved: (v) => email = v!.trim(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Logo estilizada
+            Center(
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'LEVEL UP ',
+                      style: TextStyle(
+                        color: Color(0xFFFB9220),
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'HARDWARE',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Senha'),
-                obscureText: true,
-                validator: (v) =>
-                    v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
-                onSaved: (v) => password = v!,
+            ),
+            SizedBox(height: 32),
+            Form(
+              key: _form,
+              child: Column(
+                children: [
+                  TextFormField(
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(color: Colors.white70),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFFB9220)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFFB9220), width: 2),
+                      ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (v) =>
+                        v == null || !v.contains('@') ? 'Email inválido' : null,
+                    onSaved: (v) => email = v!.trim(),
+                  ),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      labelText: 'Senha',
+                      labelStyle: TextStyle(color: Colors.white70),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFFB9220)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFFB9220), width: 2),
+                      ),
+                    ),
+                    obscureText: true,
+                    validator: (v) =>
+                        v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
+                    onSaved: (v) => password = v!,
+                  ),
+                  SizedBox(height: 24),
+                  if (loading) CircularProgressIndicator(color: Color(0xFFFB9220)),
+                  if (!loading)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ElevatedButton(
+                          onPressed: _login,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFFB9220),
+                            foregroundColor: Colors.white,
+                          ),
+                          child: Text('Entrar'),
+                        ),
+                        TextButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => RegisterPage(api: widget.api),
+      ),
+    );
+  },
+  child: Text(
+    "Criar conta",
+    style: TextStyle(color: Color(0xFFFB9220)),
+  ),
+)
+,
+                      ],
+                    )
+                ],
               ),
-              SizedBox(height: 16),
-              if (loading) CircularProgressIndicator(),
-              if (!loading)
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      ElevatedButton(onPressed: _login, child: Text('Entrar')),
-                      ElevatedButton(
-                          onPressed: _register, child: Text('Registrar')),
-                    ])
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

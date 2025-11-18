@@ -3,7 +3,7 @@ import '../services/api.dart';
 
 class AdminAddProduct extends StatefulWidget {
   final Api api;
-  const AdminAddProduct({Key? key, required this.api}) : super(key: key);
+  const AdminAddProduct({super.key, required this.api});
 
   @override
   State<AdminAddProduct> createState() => _AdminAddProductState();
@@ -57,11 +57,12 @@ class _AdminAddProductState extends State<AdminAddProduct> {
                         'imageUrl': imageUrl,
                       });
                       setState(() => submitting = false);
-                      if (ok)
+                      if (ok) {
                         Navigator.pop(context);
-                      else
+                      } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Erro ao criar')));
+                      }
                     },
                     child: Text('Criar Produto'))
           ]),
