@@ -1,7 +1,7 @@
 # LevelUp Hardware – Frontend
 Aplicativo mobile Flutter para consulta e comparação de produtos de hardware.
 
-O **LevelUp Hardware** é um app criado como projeto da disciplina **UPX V da FACENS**, com o objetivo de funcionar como um “Zoom do Hardware”.
+O **LevelUp Hardware** é um aplicativo criado como projeto da disciplina **UPX V da FACENS**, com foco em criar um app de Hardware, permitindo que usuários explorem produtos, reviews, artigos, e sejam direcionados para lojas parceiras através de links afiliados.
 
 ## 📱 Funcionalidades
 - Login & Cadastro
