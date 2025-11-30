@@ -32,10 +32,14 @@ class _AdminProductPageState extends State<AdminProductPage> {
   Future<void> _deleteProduct(int id) async {
     final ok = await widget.api.adminDeleteProduct(id);
     if (ok) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Produto deletado')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Produto deletado')),
+      );
       await _load();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro ao deletar')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao deletar')),
+      );
     }
   }
 
@@ -51,40 +55,52 @@ class _AdminProductPageState extends State<AdminProductPage> {
   void _addProduct() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => AdminProductForm(api: widget.api),
-      ),
+      MaterialPageRoute(builder: (_) => AdminProductForm(api: widget.api)),
     ).then((_) => _load());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0B1D2A),
       appBar: AppBar(
-        title: Text('Admin - Produtos'),
+        backgroundColor: const Color(0xFF0B1D2A),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Admin - Produtos', style: TextStyle(color: Colors.white)),
         actions: [
-          IconButton(icon: Icon(Icons.add), onPressed: _addProduct),
+          IconButton(
+            icon: const Icon(Icons.add, color: Color(0xFFFB9220)),
+            onPressed: _addProduct,
+          ),
         ],
       ),
       body: loading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFFFB9220)))
           : ListView.builder(
               itemCount: products.length,
               itemBuilder: (_, i) {
                 final item = products[i] as Map<String, dynamic>;
-                return ListTile(
-                  title: Text(item['title'] ?? ''),
-                  subtitle: Text(item['brand'] ?? ''),
-                  trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                    IconButton(
-                      icon: Icon(Icons.edit, color: Colors.blue),
-                      onPressed: () => _editProduct(item),
+                return Card(
+                  color: const Color(0xFF1A2A38),
+                  margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: ListTile(
+                    title: Text(item['title'] ?? '', style: const TextStyle(color: Colors.white)),
+                    subtitle: Text(item['brand'] ?? '', style: const TextStyle(color: Colors.white70)),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () => _editProduct(item),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _deleteProduct(item['id'] as int),
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteProduct(item['id'] as int),
-                    )
-                  ]),
+                  ),
                 );
               },
             ),

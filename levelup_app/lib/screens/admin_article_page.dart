@@ -32,12 +32,14 @@ class _AdminArticlePageState extends State<AdminArticlePage> {
   Future<void> _deleteArticle(int id) async {
     final ok = await widget.api.adminDeleteArticle(id);
     if (ok) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Artigo deletado')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Artigo deletado')),
+      );
       await _load();
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Erro ao deletar')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao deletar')),
+      );
     }
   }
 
@@ -53,40 +55,52 @@ class _AdminArticlePageState extends State<AdminArticlePage> {
   void _addArticle() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => AdminArticleForm(api: widget.api),
-      ),
+      MaterialPageRoute(builder: (_) => AdminArticleForm(api: widget.api)),
     ).then((_) => _load());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0B1D2A),
       appBar: AppBar(
-        title: Text('Admin - Artigos'),
+        backgroundColor: const Color(0xFF0B1D2A),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Admin - Artigos', style: TextStyle(color: Colors.white)),
         actions: [
-          IconButton(icon: Icon(Icons.add), onPressed: _addArticle),
+          IconButton(
+            icon: const Icon(Icons.add, color: Color(0xFFFB9220)),
+            onPressed: _addArticle,
+          ),
         ],
       ),
       body: loading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFFFB9220)))
           : ListView.builder(
               itemCount: articles.length,
               itemBuilder: (_, i) {
                 final item = articles[i] as Map<String, dynamic>;
-                return ListTile(
-                  title: Text(item['title'] ?? ''),
-                  subtitle: Text(item['author'] ?? ''),
-                  trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                    IconButton(
-                      icon: Icon(Icons.edit, color: Colors.blue),
-                      onPressed: () => _editArticle(item),
+                return Card(
+                  color: const Color(0xFF1A2A38),
+                  margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: ListTile(
+                    title: Text(item['title'] ?? '', style: const TextStyle(color: Colors.white)),
+                    subtitle: Text(item['author'] ?? '', style: const TextStyle(color: Colors.white70)),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () => _editArticle(item),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _deleteArticle(item['id'] as int),
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteArticle(item['id'] as int),
-                    )
-                  ]),
+                  ),
                 );
               },
             ),

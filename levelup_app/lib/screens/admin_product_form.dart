@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import '../services/api.dart';
 import '../services/notification_service.dart';
 
-
 class AdminProductForm extends StatefulWidget {
   final Api api;
-  final Map<String, dynamic>? product; // se null, é criação
+  final Map<String, dynamic>? product;
 
   const AdminProductForm({super.key, required this.api, this.product});
 
@@ -34,71 +33,108 @@ class _AdminProductFormState extends State<AdminProductForm> {
   }
 
   Future<void> _save() async {
-  if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) return;
 
-  final body = {
-    'title': titleController.text,
-    'brand': brandController.text,
-    'description': descriptionController.text,
-    'price': double.tryParse(priceController.text),
-    'affiliateUrl': affiliateController.text,
-    'imageUrl': imageController.text,
-  };
+    final body = {
+      'title': titleController.text,
+      'brand': brandController.text,
+      'description': descriptionController.text,
+      'price': double.tryParse(priceController.text),
+      'affiliateUrl': affiliateController.text,
+      'imageUrl': imageController.text,
+    };
 
-  bool ok = false;
-  bool isCreating = widget.product == null;
+    bool ok = false;
+    bool isCreating = widget.product == null;
 
-  if (widget.product != null) {
-    final id = widget.product!['id'] as int;
-    ok = await widget.api.adminUpdateProduct(id, body);
-  } else {
-    ok = await widget.api.adminCreateProduct(body);
-  }
-
-  if (ok) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Salvo com sucesso')),
-    );
-
-    // NOTIFICAÇÃO MOCKADA QUANDO CRIAR UM NOVO PRODUTO
-    if (isCreating) {
-      NotificationService().showLocalNotification(
-        context,
-        "Novo produto adicionado",
-        "${titleController.text} foi cadastrado!",
-      );
+    if (widget.product != null) {
+      final id = widget.product!['id'] as int;
+      ok = await widget.api.adminUpdateProduct(id, body);
+    } else {
+      ok = await widget.api.adminCreateProduct(body);
     }
 
-    Navigator.pop(context);
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Erro ao salvar')),
-    );
-  }
-}
+    if (ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Salvo com sucesso')),
+      );
 
+      if (isCreating) {
+        NotificationService.showNativeNotification(
+          "Novo produto publicado!!",
+          titleController.text,
+        );
+      }
+
+      Navigator.pop(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao salvar')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.product != null ? 'Editar Produto' : 'Adicionar Produto')),
+      backgroundColor: const Color(0xFF0B1D2A),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0B1D2A),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text(
+          widget.product != null ? 'Editar Produto' : 'Adicionar Produto',
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(controller: titleController, decoration: InputDecoration(labelText: 'Título'), validator: (v) => v!.isEmpty ? 'Campo obrigatório' : null),
-              TextFormField(controller: brandController, decoration: InputDecoration(labelText: 'Marca')),
-              TextFormField(controller: descriptionController, decoration: InputDecoration(labelText: 'Descrição')),
-              TextFormField(controller: priceController, decoration: InputDecoration(labelText: 'Preço'), keyboardType: TextInputType.number),
-              TextFormField(controller: affiliateController, decoration: InputDecoration(labelText: 'Link Afiliado')),
-              TextFormField(controller: imageController, decoration: InputDecoration(labelText: 'URL da Imagem')),
-              SizedBox(height: 20),
-              ElevatedButton(onPressed: _save, child: Text('Salvar')),
+              _buildField('Título', titleController, required: true),
+              _buildField('Marca', brandController),
+              _buildField('Descrição', descriptionController),
+              _buildField('Preço', priceController, keyboard: TextInputType.number),
+              _buildField('Link Afiliado', affiliateController),
+              _buildField('URL da Imagem', imageController),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFB9220)),
+                  onPressed: _save,
+                  child: const Text('Salvar', style: TextStyle(color: Colors.white)),
+                ),
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildField(String label, TextEditingController controller,
+      {TextInputType keyboard = TextInputType.text, bool required = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboard,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.white70),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white24),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFFFB9220)),
+          ),
+        ),
+        validator: required
+            ? (v) => (v == null || v.isEmpty) ? 'Campo obrigatório' : null
+            : null,
       ),
     );
   }

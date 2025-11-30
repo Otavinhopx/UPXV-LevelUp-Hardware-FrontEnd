@@ -4,20 +4,23 @@ import 'package:provider/provider.dart';
 import 'services/api.dart';
 import 'screens/login_page.dart';
 import 'screens/product_list_page.dart';
-
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.initialize();
 
-  // inicialização mockada (sem Firebase)
-  await NotificationService().initialize();
+      NotificationService.showNativeNotification(
+  "Teste Funciona",
+  "Se isso apareceu, tá tudo OK!",
+);
 
   runApp(LevelUpApp());
 }
 
 
 class LevelUpApp extends StatelessWidget {
-// Set your backend baseUrl here (for emulator: Android -> 10.0.2.2)
+
   final String baseUrl = 'http://localhost:5151';
 
   const LevelUpApp({super.key});

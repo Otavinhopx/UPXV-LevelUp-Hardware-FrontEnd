@@ -3,7 +3,6 @@ import 'package:levelup_app/services/api.dart';
 import 'admin_hub_page.dart'; 
 import 'register_page.dart';
 
-
 class LoginPage extends StatefulWidget {
   final Api api;
   const LoginPage({super.key, required this.api});
@@ -37,38 +36,29 @@ class _LoginPageState extends State<LoginPage> {
       }
     } else {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Login failed')));
+          .showSnackBar(const SnackBar(content: Text('Login failed')));
     }
   }
 
-  void _register() async {
-    if (!_form.currentState!.validate()) return;
-    _form.currentState!.save();
-    setState(() => loading = true);
-    final ok = await widget.api.register(email, password);
-    setState(() => loading = false);
-    if (ok) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Registered!')));
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Register failed')));
-    }
+  void _goToRegister() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => RegisterPage(api: widget.api)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF0B1D2A),
+      backgroundColor: const Color(0xFF0B1D2A),
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo estilizada
             Center(
               child: RichText(
-                text: TextSpan(
+                text: const TextSpan(
                   children: [
                     TextSpan(
                       text: 'LEVEL UP ',
@@ -90,20 +80,20 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
             Form(
               key: _form,
               child: Column(
                 children: [
                   TextFormField(
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      labelStyle: TextStyle(color: Colors.white70),
-                      enabledBorder: OutlineInputBorder(
+                      labelStyle: const TextStyle(color: Colors.white70),
+                      enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xFFFB9220)),
                       ),
-                      focusedBorder: OutlineInputBorder(
+                      focusedBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xFFFB9220), width: 2),
                       ),
                     ),
@@ -112,16 +102,16 @@ class _LoginPageState extends State<LoginPage> {
                         v == null || !v.contains('@') ? 'Email inválido' : null,
                     onSaved: (v) => email = v!.trim(),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   TextFormField(
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                     decoration: InputDecoration(
                       labelText: 'Senha',
-                      labelStyle: TextStyle(color: Colors.white70),
-                      enabledBorder: OutlineInputBorder(
+                      labelStyle: const TextStyle(color: Colors.white70),
+                      enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xFFFB9220)),
                       ),
-                      focusedBorder: OutlineInputBorder(
+                      focusedBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xFFFB9220), width: 2),
                       ),
                     ),
@@ -130,35 +120,36 @@ class _LoginPageState extends State<LoginPage> {
                         v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
                     onSaved: (v) => password = v!,
                   ),
-                  SizedBox(height: 24),
-                  if (loading) CircularProgressIndicator(color: Color(0xFFFB9220)),
-                  if (!loading)
+                  const SizedBox(height: 24),
+                  if (loading)
+                    const CircularProgressIndicator(color: Color(0xFFFB9220))
+                  else
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        ElevatedButton(
-                          onPressed: _login,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFFB9220),
-                            foregroundColor: Colors.white,
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: _login,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFB9220),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            child: const Text('Entrar'),
                           ),
-                          child: Text('Entrar'),
                         ),
-                        TextButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => RegisterPage(api: widget.api),
-      ),
-    );
-  },
-  child: Text(
-    "Criar conta",
-    style: TextStyle(color: Color(0xFFFB9220)),
-  ),
-)
-,
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: _goToRegister,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFB9220),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            child: const Text('Criar conta'),
+                          ),
+                        ),
                       ],
                     )
                 ],

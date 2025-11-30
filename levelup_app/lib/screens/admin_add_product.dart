@@ -21,52 +21,73 @@ class _AdminAddProductState extends State<AdminAddProduct> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Adicionar Produto')),
+      backgroundColor: const Color(0xFF0B1D2A),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0B1D2A),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Adicionar Produto', style: TextStyle(color: Colors.white)),
+      ),
       body: Padding(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _form,
-          child: Column(children: [
-            TextFormField(
-                decoration: InputDecoration(labelText: 'Título'),
-                onSaved: (v) => title = v ?? ''),
-            TextFormField(
-                decoration: InputDecoration(labelText: 'Marca'),
-                onSaved: (v) => brand = v ?? ''),
-            TextFormField(
-                decoration: InputDecoration(labelText: 'Descrição'),
-                onSaved: (v) => description = v ?? ''),
-            TextFormField(
-                decoration: InputDecoration(labelText: 'Link Afiliado'),
-                onSaved: (v) => affiliateUrl = v ?? ''),
-            TextFormField(
-                decoration: InputDecoration(labelText: 'URL Imagem'),
-                onSaved: (v) => imageUrl = v ?? ''),
-            SizedBox(height: 12),
-            submitting
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: () async {
-                      _form.currentState!.save();
-                      setState(() => submitting = true);
-                      final ok = await widget.api.adminCreateProduct({
-                        'title': title,
-                        'brand': brand,
-                        'description': description,
-                        'affiliateUrl': affiliateUrl,
-                        'imageUrl': imageUrl,
-                      });
-                      setState(() => submitting = false);
-                      if (ok) {
-                        Navigator.pop(context);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Erro ao criar')));
-                      }
-                    },
-                    child: Text('Criar Produto'))
-          ]),
+          child: Column(
+            children: [
+              _buildTextField('Título', (v) => title = v ?? ''),
+              _buildTextField('Marca', (v) => brand = v ?? ''),
+              _buildTextField('Descrição', (v) => description = v ?? ''),
+              _buildTextField('Link Afiliado', (v) => affiliateUrl = v ?? ''),
+              _buildTextField('URL Imagem', (v) => imageUrl = v ?? ''),
+              const SizedBox(height: 16),
+              submitting
+                  ? const CircularProgressIndicator(color: Color(0xFFFB9220))
+                  : SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFFB9220),
+                        ),
+                        onPressed: () async {
+                          _form.currentState!.save();
+                          setState(() => submitting = true);
+                          final ok = await widget.api.adminCreateProduct({
+                            'title': title,
+                            'brand': brand,
+                            'description': description,
+                            'affiliateUrl': affiliateUrl,
+                            'imageUrl': imageUrl,
+                          });
+                          setState(() => submitting = false);
+                          if (ok) Navigator.pop(context);
+                          else ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Erro ao criar')));
+                        },
+                        child: const Text('Criar Produto', style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, Function(String?) onSaved) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextFormField(
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.white70),
+          enabledBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white24),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFFFB9220)),
+          ),
+        ),
+        onSaved: onSaved,
       ),
     );
   }

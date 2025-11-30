@@ -1,4 +1,4 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/api.dart';
@@ -25,7 +25,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     super.initState();
     _loadArticles();
     _loadReviews();
-    _subscribeToProductTopic();
   }
 
   Future<void> _loadArticles() async {
@@ -52,14 +51,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     }
   }
 
-  void _subscribeToProductTopic() async {
-  final messaging = FirebaseMessaging.instance;
-
-  await messaging.subscribeToTopic("new_products");
-  print("📨 Inscrito no tópico: new_products");
-}
-
-
+ 
   void _openAddReviewModal() {
   int stars = 5;
   String comment = '';
