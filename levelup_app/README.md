@@ -1,16 +1,46 @@
-# levelup_app
+# LevelUp Hardware – Frontend
+Aplicativo mobile Flutter para consulta e comparação de produtos de hardware.
 
-A new Flutter project.
+O **LevelUp Hardware** é um app criado como projeto da disciplina **UPX V da FACENS**, com o objetivo de funcionar como um “Zoom do Hardware”.
 
-## Getting Started
+## 📱 Funcionalidades
+- Login & Cadastro
+- Exibição de produtos, artigos e reviews
+- Links afiliados para compra
+- Notificações
+- Área administrativa (para usuários admin)
 
-This project is a starting point for a Flutter application.
+## 📸 Visual
 
-A few resources to get you started if this is your first Flutter project:
+[![image.png](https://i.postimg.cc/T36MY6Xt/image.png)](https://postimg.cc/56nknDyz)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 🧱 Tecnologias
+- Flutter
+- Dart
+- HTTP package
+- Flutter Secure Storage
+- Gerência de estado (Provider / outra)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📁 Estrutura
+```
+/lib
+  /screens
+  /services
+```
+
+## ▶ Como Rodar
+```
+git clone https://github.com/Otavinhopx/UPXV-LevelUp-Hardware-FrontEnd
+cd UPXV-LevelUp-Hardware-FrontEnd
+flutter pub get
+flutter run
+```
+
+## 🔌 Configuração da API
+Editar:
+```
+lib/services/api_config.dart
+```
+
+## 📚 Sobre o Projeto
+Projeto da disciplina **UPX V – FACENS**.
